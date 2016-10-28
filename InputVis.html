@@ -1,0 +1,103 @@
+<!DOCTYPE HTML>
+<html>
+    
+    <head>
+
+    <span id="Side"></span><br>
+    <span id="tstamp"></span>
+
+    <br><br>
+    <button onclick="start()">Connect</button>
+    <script src="jquery-3.1.0.min.js"></script>
+    <script src="paperjs-v0/dist/paper-full.js"> </script>
+    <script type="text/javascript" canvas="paper">
+        
+
+        
+    function start() {
+
+        document.getElementById("Side").innerHTML = "Waiting for data...";
+        var deviceID = "3f003f001747343338333633";
+        var accessToken = "cdc5319d517505156cb710d30b8867e247c9f7c6";
+        var eventSource = new EventSource("https://api.particle.io/v1/devices/" + deviceID + "/events/?access_token=" + accessToken);
+        
+        
+
+
+//function onFrame(event) {
+	// Each frame, change the fill color of the path slightly by
+	// adding 1 to its hue:
+//	path.fillColor.hue += 1;
+// }
+        
+       eventSource.addEventListener("Side",
+function(e){console.log("Got Side: ", e);})
+
+        
+     //   function myHandler(e)
+      //  {
+          //  if(e.type == 'Side')
+       //         
+                
+                
+     //   }
+        
+       // eventSource.addEventListener('Side', myHandler);
+        //eventSource.addEventListener('Event2', myHandler);
+        
+    
+      eventSource.addEventListener('Side', function(e) {
+            var parsedData = JSON.parse(e.data);
+        window.pitch = parsedData.data;
+       window.pitch =    Number(pitch);
+           var tempSpan = document.getElementById("Side");
+            var tsSpan   = document.getElementById("tstamp");
+           tempSpan.innerHTML =  " Side: " + parsedData.data;
+            tempSpan.style.fontSize = "28px";
+            tsSpan.innerHTML = "At timestamp " + parsedData.published_at;
+            tsSpan.style.fontSize = "9px";
+        }, false);
+        
+        
+        
+    }
+    </script>
+        
+        
+        
+                
+         <script type="text/paperscript" canvas="paper">
+        
+// Create a circle shaped path at the center of the view,
+// with a radius of 70:
+var path = new Path.Circle({
+	center: view.center,
+	radius: 70,
+	fillColor: 'red'
+});
+
+function onFrame(event) {
+	// Each frame, change the fill color of the path slightly by
+	// adding 1 to its hue:
+    if (window.pitch>15)
+    {path.fillColor = 'Blue'}
+    else if (window.pitch <-15)
+    {path.fillColor = 'Red'}
+    else 
+	path.fillColor.hue += 1;
+}
+        
+        </script>  
+        
+        
+        
+    </head>
+    
+    
+    
+      <body>  
+          
+          
+          <canvas id="paper" width="500px" height="200px" resize></canvas>
+</body>
+</html>
